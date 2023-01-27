@@ -57,3 +57,11 @@ display(df[['sn_short_description']].iloc[best_index])
 end_time = time.time()
 
 print("Time taken: {:.2f} seconds".format(end_time - start_time))
+
+
+
+
+start_time = time.time()
+end_time = time.time()
+print("Time taken: {:.2f} seconds".format(end_time - start_time))
+
