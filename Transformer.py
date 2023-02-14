@@ -27,3 +27,54 @@ for score, idx in zip(top_results[0], top_results[1]):
 display(df[['sn_short_description']].iloc[best_index])    
 end_time = time.time()
 print("Time taken: {:.2f} seconds".format(end_time - start_time))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics import accuracy_score
+
+df = pd.read_csv("incident_data.csv")
+
+X = df['incident number']
+y = df['KD Link']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+# Convert the training data into Tf-idf vectors
+vectorizer = TfidfVectorizer()
+X_train_vectors = vectorizer.fit_transform(X_train)
+
+# Convert the testing data into Tf-idf vectors
+X_test_vectors = vectorizer.transform(X_test)
+
+# Train the model using the training data
+model = SomeSimilarityModel()
+model.fit(X_train_vectors, y_train)
+
+# Make predictions on the testing data
+y_pred = model.predict(X_test_vectors)
+
+# Calculate the accuracy score
+accuracy = accuracy_score(y_test, y_pred)
+print("Accuracy:", accuracy)
