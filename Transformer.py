@@ -78,3 +78,58 @@ y_pred = model.predict(X_test_vectors)
 # Calculate the accuracy score
 accuracy = accuracy_score(y_test, y_pred)
 print("Accuracy:", accuracy)
+
+
+
+
+
+
+
+
+df = df[~df.sn_short_description.isna()]
+df = df.iloc[:20000]
+df.head()
+STOPWORDS = set(stopwords.words('english')).union({'esc211', 'esc', 'crit', 'warn', 'val', 'percent', 'pct', 'severity', 'warning', 'rule', 'initial', 'alert','l','esc2', 'sgw','gbw', 'usw', 'uslp', 'krlp', 'max', 'min', 'val','cs', 'ap','prod', 'lin'})
+MIN_WORDS = 4
+MAX_WORDS = 200
+
+
+
+
+def clean_text(text):
+    """
+    Series of cleaning. String to lower case, remove non words characters and numbers.
+        text (str): input text
+    return (str): modified initial text
+    """
+    PATTERN_S = re.compile("\'s")  # matches `'s` from text`
+    PATTERN_RN = re.compile("\\r\\n") #matches `\r` and `\n`
+    PATTERN_PUNC = re.compile(r"[^\w\s]") # matches all non 0-9 A-z whitespace
+    PATTERN_1 = re.compile(r"\b(?<!-)[0-9]+\b\s*")
+    PATTERN_2 = re.compile(r"\^\s*|\s\s*")
+    PATTERN_DIGITS = re.compile(r"\d")
+    PATTERN_HTTPS = re.compile(r"https:?://\S+|www\.\S+")
+    text = text.lower()  # lowercase text
+    text = re.sub(PATTERN_S, ' ', text)
+    text = re.sub(PATTERN_RN, ' ', text)
+    text = re.sub(PATTERN_PUNC, ' ', text)
+    text = re.sub(PATTERN_1, ' ', text)
+    text = re.sub(PATTERN_2, ' ', text)
+    text = re.sub(PATTERN_DIGITS, ' ', text)
+    text = re.sub(PATTERN_HTTPS, ' ', text)
+    return text
+
+def tokenizer(sentence, min_words=MIN_WORDS, max_words=MAX_WORDS, stopwords=STOPWORDS, lemmatize=True):
+    """
+    Lemmatize, tokenize, crop and remove stop words.
+    """
+    if lemmatize:
+        stemmer = WordNetLemmatizer()
+        tokens = [stemmer.lemmatize(w) for w in word_tokenize(sentence)]
+    else:
+        tokens = [w for w in word_tokenize(sentence)]
+    tokens = [w for w in tokens if (len(w) > min_words and len(w) < max_words)]
+    # remove new stopwords from the token list
+    tokens = [w for w in tokens if w not in stopwords]
+    return tokens
+
