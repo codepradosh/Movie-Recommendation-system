@@ -86,6 +86,8 @@ print("Accuracy:", accuracy)
 
 
 
+
+
 df = df[~df.sn_short_description.isna()]
 df = df.iloc[:20000]
 df.head()
@@ -132,4 +134,24 @@ def tokenizer(sentence, min_words=MIN_WORDS, max_words=MAX_WORDS, stopwords=STOP
     # remove new stopwords from the token list
     tokens = [w for w in tokens if w not in stopwords]
     return tokens
+
+
+def clean_sentences(df):
+    """
+    Remove irrelavant characters (in new column clean_sentence).
+    Lemmatize, tokenize words into list of words (in new column tok_lem_sentence).
+    """
+    print('Cleaning sentences...')
+    df['clean_sentence'] = df['sn_short_description'].apply(clean_text)
+    df['tok_lem_sentence'] = df['clean_sentence'].apply(
+        lambda x: tokenizer(x, min_words=MIN_WORDS, max_words=MAX_WORDS, stopwords=STOPWORDS, lemmatize=True))
+    return df
+
+
+df = clean_sentences(df)
+pd.options.display.max_colwidth = 500
+
+df.head(3)
+
+
 
