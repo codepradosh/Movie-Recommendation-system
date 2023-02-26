@@ -134,4 +134,33 @@ def remove_english_stopwords(text):
     t = [token for token in text.split() if token not in stop
 
 
+         
+         
+         
+from sklearn.metrics.pairwise import cosine_similarity
+
+def predict_w2v(query_sentence, dataset, model, k=10):
+    query_sentence = query_sentence.split()
+    in_vocab_list, best_index = [], [0]*k
+    for w in query_sentence:
+        # remove unseen words from query sentence
+        if is_word_in_model(w, model.wv):
+            in_vocab_list.append(w)
+    # Retrieve the similarity between two words as a distance
+    if len(in_vocab_list) > 0:
+        sim_mat = np.zeros(len(dataset))
+        for i, data_sentence in enumerate(dataset):
+            if data_sentence:
+                sim_sentence = cosine_similarity(
+                    [model.wv[w] for w in in_vocab_list], 
+                    [model.wv[w] for w in data_sentence]
+                ).mean()
+            else:
+                sim_sentence = 0
+            sim_mat[i] = np.array(sim_sentence)
+        # Take the k highest similarity scores
+        best_index = np.argsort(sim_mat)[::-1][:k]
+    return best_index
+         
+        
 
