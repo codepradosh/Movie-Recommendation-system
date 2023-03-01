@@ -164,3 +164,5 @@ def predict_w2v(query_sentence, dataset, model, k=10):
          
         
 
+final_outcome = 'Please refer below confluence document to address this issue:<br><br>'
+final_outcome += '<a href="' + outcome['URL'] + '">' + outcome['Recommended Document'] + '</a>'
